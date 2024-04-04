@@ -34,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> goBackWithJavaScript() async {
     await inAppWebViewController.evaluateJavascript(source: 'window.history.back();');
-    }
+  }
 
   @override
   void initState() {
@@ -43,22 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
       Navigator.of(context).popUntil((route) => route.isFirst);
     });
   }
-
-  /*final controller = WebViewController()
-  ..setJavaScriptMode(JavaScriptMode.unrestricted)
-  ..loadRequest(Uri.parse("https://aasmartdrivingschool.com"))
-    ..setNavigationDelegate(
-      NavigationDelegate(
-        onProgress: (int progress) {
-          // Update loading bar.
-          debugPrint("progress==>$progress");
-        },
-        onPageStarted: (String url) {
-        },
-        onPageFinished: (String url) {},
-      ),
-    );*/
-  // ..loadRequest(Uri.parse("https://motivateu.in/"));
 
   @override
   Widget build(BuildContext context) {
@@ -71,41 +55,41 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return SafeArea(
       child: Scaffold(
-        // appBar: AppBar(
-        //   title: Text("Smart Driving School"),
-        // ),
-        body: Column(
+        body: Stack(
           children: [
-            if (!_webViewLoaded || _progress < 1)
-              LinearProgressIndicator(
-                color: Colors.redAccent,
-                value: _progress,
-              ),
-            Expanded(
-              child: InAppWebView(
-                initialUrlRequest: URLRequest(url: Uri.parse("https://aasmartdrivingschool.com")),
-                  initialOptions: options,
-                  onWebViewCreated: (InAppWebViewController controller) {
-                    inAppWebViewController = controller;
-                  },
-                  onLoadStop: (controller, url) {
-                    controller.evaluateJavascript(source: "https://aasmartdrivingschool.com");
-                        setState(() {
-                      _webViewLoaded = true;
-                    });
-                  },
-                  onProgressChanged: (controller, progress) {
-                    setState(() {
-                      _progress = progress / 100;
-                    });
-                  },
-                ),
+            InAppWebView(
+              initialUrlRequest: URLRequest(url: Uri.parse("https://aasmartdrivingschool.com")),
+              initialOptions: options,
+              onWebViewCreated: (InAppWebViewController controller) {
+                inAppWebViewController = controller;
+              },
+              onLoadStop: (controller, url) {
+                controller.evaluateJavascript(source: "https://aasmartdrivingschool.com");
+                setState(() {
+                  _webViewLoaded = true;
+                });
+              },
+              onProgressChanged: (controller, progress) {
+                setState(() {
+                  _progress = progress / 100;
+                });
+              },
             ),
-
+            if (!_webViewLoaded || _progress < 1)
+              Center(
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 10),
+                  child: LinearProgressIndicator(
+                    color: Colors.redAccent,
+                    value: _progress,
+                  ),
+                ),
+              ),
           ],
-        )
+        ),
       ),
     );
   }
 }
+
 
